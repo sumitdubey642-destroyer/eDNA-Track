@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eDNA Track | Decentralized eDNA & ZKP Biodiversity Network</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Leaflet Interactive Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="app-shell">
+        <!-- Top Telemetry Header -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="dna-pulse"></div>
+                <div>
+                    <h1>eDNA Track <span>PRO</span></h1>
+                    <p>Decentralized eDNA Optical Sequencer & Zero-Knowledge Ledger</p>
+                </div>
+            </div>
+            <div class="status-pills">
+                <div class="pill" id="gps-pill">📍 GPS: Acquiring Lock...</div>
+                <div class="pill" id="cam-pill">📷 Optical Sensor: Standby</div>
+                <div class="pill verified">🔐 ZKP Engine: SHA-256 Active</div>
+            </div>
+        </header>
+
+        <!-- Main 3-Column Bioinformatics Grid -->
+        <main class="main-grid">
+            <!-- COLUMN 1: Live WebRTC Camera Strip Scanner -->
+            <section class="panel scanner-panel">
+                <div class="panel-header">
+                    <h2>1. Optical eDNA Strip Scanner</h2>
+                    <span class="tag">WebRTC RGB-to-Base</span>
+                </div>
+
+                <div class="viewport-wrapper">
+                    <video id="camera-stream" autoplay playsinline muted></video>
+                    <canvas id="optical-canvas" width="320" height="240" hidden></canvas>
+                    
+                    <!-- HUD Laser Overlay -->
+                    <div class="hud-overlay">
+                        <div class="reticle-box">
+                            <div class="laser-line"></div>
+                            <span class="reticle-label">ALIGN LATERAL FLOW eDNA STRIP HERE</span>
+                        </div>
+                        <div class="optical-channels">
+                            <span id="ch-a">A (Adenine): 0%</span>
+                            <span id="ch-t">T (Thymine): 0%</span>
+                            <span id="ch-c">C (Cytosine): 0%</span>
+                            <span id="ch-g">G (Guanine): 0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scanner-controls">
+                    <button id="btn-camera" class="btn-secondary">📷 Start Live Camera</button>
+                    <button id="btn-scan" class="btn-primary">🧬 Scan Strip & Generate ZK-Proof</button>
+                </div>
+
+                <div class="sim-controls">
+                    <label>Field Sample Preset (Fallback / Testing Mode):</label>
+                    <select id="sample-preset">
+                        <option value="random">Live Optical Camera Feed (Dynamic Entropy)</option>
+                        <option value="invasive_carp">Sample #1: Silver Carp (Invasive Threat - River Stream)</option>
+                        <option value="chytrid_fungus">Sample #2: Batrachochytrium dendrobatidis (Deadly Amphibian Fungus)</option>
+                        <option value="snow_leopard">Sample #3: Panthera uncia (Endangered Alpine Trace)</option>
+                        <option value="gangetic_dolphin">Sample #4: Platanista gangetica (Protected River Cetacean)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- COLUMN 2: AI Genetic Alignment & ZKP Verification -->
+            <section class="panel ai-panel">
+                <div class="panel-header">
+                    <h2>2. Neural COI Alignment & ZK-Proof</h2>
+                    <span class="tag" id="confidence-badge">Awaiting Scan</span>
+                </div>
+
+                <!-- Extracted Sequence Box -->
+                <div class="code-box">
+                    <div class="code-label">EXTRACTED 64-BP MITOCHONDRIAL COI SEQUENCE</div>
+                    <div id="dna-sequence-display" class="dna-seq">
+                        ATG-CGT-TAC-GGA-CTA-TTC-GGA-CCT-AAG-TGC-CAT-GGA...
+                    </div>
+                </div>
+
+                <!-- Species Match Card -->
+                <div class="match-card" id="match-card">
+                    <div class="match-header">
+                        <div>
+                            <span class="sub-label">TAXONOMIC CLASSIFICATION</span>
+                            <h3 id="species-name">Ready to Sequence</h3>
+                            <em id="species-latin">Align strip in optical reticle or select preset</em>
+                        </div>
+                        <div class="status-badge" id="ecological-status">STANDBY</div>
+                    </div>
+
+                    <div class="alignment-metrics">
+                        <div class="metric">
+                            <span>k-mer Cosine Similarity</span>
+                            <strong id="metric-similarity">0.0%</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Edit Distance (Smith-Waterman)</span>
+                            <strong id="metric-distance">0 bp</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Habitat Telemetry</span>
+                            <strong id="metric-habitat">--</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cryptographic Proof Box -->
+                <div class="zkp-box">
+                    <div class="zkp-header">
+                        <span>ZERO-KNOWLEDGE TELEMETRY ATTESTATION (SHA-256)</span>
+                        <span class="zkp-valid" id="zkp-status">UNVERIFIED</span>
+                    </div>
+                    <div class="hash-row">
+                        <span>Payload:</span>
+                        <code id="zkp-payload">GPS + UTC_TIMESTAMP + COI_SEQ + OPTICAL_NONCE</code>
+                    </div>
+                    <div class="hash-row">
+                        <span>ZK-Hash:</span>
+                        <code id="zkp-hash">0x0000000000000000000000000000000000000000000000000000000000000000</code>
+                    </div>
+                    <button id="btn-tamper" class="btn-tamper" disabled>⚠️ Test Anti-Spoofing (Simulate GPS Tamper)</button>
+                </div>
+            </section>
+
+            <!-- COLUMN 3: Live Geospatial Map & Tamper-Proof Ledger -->
+            <section class="panel map-panel">
+                <div class="panel-header">
+                    <h2>3. Decentralized Bio-Ledger & Map</h2>
+                    <span class="tag" id="ledger-count">4 Verified Nodes</span>
+                </div>
+
+                <div id="bio-map" class="map-container"></div>
+
+                <div class="ledger-header">
+                    <span>IMMUTABLE BIODIVERSITY BLOCK LEDGER</span>
+                    <button id="btn-export" class="btn-mini">⬇ Export JSON Ledger</button>
+                </div>
+                <div id="ledger-list" class="ledger-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
